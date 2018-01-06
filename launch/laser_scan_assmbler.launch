@@ -1,9 +1,4 @@
 <launch>
-  <node name="laser_assembler" type="laser_scan_assembler" pkg="laser_assembler">
-    <param name="max_scans" type="int" value="4000" />
-    <param name="fixed_frame" type="string" value="odom" />
-  </node>
-
-  <node name="periodic_snapshotter" pkg="merge_laser_scan" type="periodic_snapshotter_node">
+  <node name="merge_laser_scan" pkg="merge_laser_scan" type="merge_laser_scan.py">
   </node>
 </launch>
