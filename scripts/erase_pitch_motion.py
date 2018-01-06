@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 import rospy
 import tf
-from sensor_msgs.msg import LaserScan
 from tf2_msgs.msg import TFMessage
 from nav_msgs.msg import Odometry
 
-class merge_laser_scan:
+class erase_pitch_motion:
     def __init__(self):
         rospy.init_node('erase_pitch_motion', anonymous=True)
         self.scan_sub = rospy.Subscriber("/icart_mini/odom", Odometry, self.callback_odom, queue_size=1)
@@ -24,7 +23,7 @@ class merge_laser_scan:
             rospy.Time.now(), 'robot_position', 'base_link')
 
 if __name__ == '__main__':
-    mls = merge_laser_scan()
+    mls = erase_pitch_motion()
     try:
         rospy.spin()
     except KeyboardInterrupt:
