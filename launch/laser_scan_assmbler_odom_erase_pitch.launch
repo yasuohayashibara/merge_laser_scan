@@ -1,0 +1,12 @@
+<launch>
+  <node name="laser_assembler" type="laser_scan_assembler" pkg="laser_assembler">
+    <param name="max_scans" type="int" value="4000" />
+    <param name="fixed_frame" type="string" value="robot_position" />
+  </node>
+
+  <node name="periodic_snapshotter" pkg="merge_laser_scan" type="periodic_snapshotter_node">
+  </node>
+
+  <node name="erase_pitch_motion" pkg="merge_laser_scan" type="erase_pitch_motion.py">
+  </node>
+</launch>
