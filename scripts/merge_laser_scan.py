@@ -10,6 +10,7 @@ from tf2_sensor_msgs.tf2_sensor_msgs import do_transform_cloud
 from std_msgs.msg import Header
 from geometry_msgs.msg import Quaternion
 import math
+import random
 
 class merge_laser_scan:
     def __init__(self):
@@ -19,6 +20,7 @@ class merge_laser_scan:
         self.tfBuffer = tf2_ros.Buffer()
         self.listener = tf2_ros.TransformListener(self.tfBuffer)
         self.tf_robot_position = tf.TransformBroadcaster()
+        self.data_pole = []
 
     def callback_scan(self, data):
         try:
@@ -68,7 +70,7 @@ class merge_laser_scan:
                 p[0] /= p[2]
                 p[1] /= p[2]
 
-        if pole[0][2] == 0 or (pole[1][2] == 0 and pole[2][2] == 0):
+        if pole[0][2] < 5 or (pole[1][2] < 5 and pole[2][2] < 5):
             return
 
         trans_diff = [6.0 - pole[0][0], 0.0 - pole[0][1]]
@@ -77,13 +79,14 @@ class merge_laser_scan:
         elif pole[2][2] != 0:
             rot_diff = math.atan2(1, -3) - math.atan2(pole[2][1] - pole[0][1], pole[2][0] - pole[0][0])
 
-        data_pole = []
+#        data_pole = []
         for x, y, z, color in data:
             tx = x + trans_diff[0] - 6.0
             ty = y + trans_diff[1]
             rx = tx * math.cos(rot_diff) - ty * math.sin(rot_diff) + 6.0
             ry = tx * math.sin(rot_diff) + ty * math.cos(rot_diff)
-            data_pole.append([rx, ry, z, color])
+            if random.random() < 0.01:
+                self.data_pole.append([rx, ry, z, color])
 
 #        print data_pole
 
@@ -94,7 +97,7 @@ class merge_laser_scan:
             PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1),
             PointField(name='rgb', offset=12, datatype=PointField.UINT32, count=1),
         ]
-        filterd_cloud = pc2.create_cloud(HEADER, FIELDS, data_pole)
+        filterd_cloud = pc2.create_cloud(HEADER, FIELDS, self.data_pole)
         self.pc_pub.publish(filterd_cloud)
 
 if __name__ == '__main__':
